@@ -1,3 +1,4 @@
+/// Web implementation of CachedNetworkImage
 library cached_network_image_web;
 
 import 'dart:async';
@@ -27,9 +28,9 @@ class ImageLoader implements platform.ImageLoader {
     int? maxHeight,
     int? maxWidth,
     Map<String, String>? headers,
-    Function()? errorListener,
+    void Function()? errorListener,
     ImageRenderMethodForWeb imageRenderMethodForWeb,
-    Function() evictImage,
+    void Function() evictImage,
   ) {
     return _load(
       url,
@@ -56,9 +57,9 @@ class ImageLoader implements platform.ImageLoader {
     int? maxHeight,
     int? maxWidth,
     Map<String, String>? headers,
-    Function()? errorListener,
+    void Function()? errorListener,
     ImageRenderMethodForWeb imageRenderMethodForWeb,
-    Function() evictImage,
+    void Function() evictImage,
   ) {
     return _load(
       url,
@@ -87,9 +88,9 @@ class ImageLoader implements platform.ImageLoader {
     int? maxHeight,
     int? maxWidth,
     Map<String, String>? headers,
-    Function()? errorListener,
+    void Function()? errorListener,
     ImageRenderMethodForWeb imageRenderMethodForWeb,
-    Function() evictImage,
+    void Function() evictImage,
   ) {
     switch (imageRenderMethodForWeb) {
       case ImageRenderMethodForWeb.HttpGet:
@@ -119,33 +120,34 @@ class ImageLoader implements platform.ImageLoader {
     int? maxHeight,
     int? maxWidth,
     Map<String, String>? headers,
-    Function()? errorListener,
-    Function() evictImage,
+    void Function()? errorListener,
+    void Function() evictImage,
   ) async* {
     try {
       await for (var result in cacheManager.getFileStream(url,
           withProgress: true, headers: headers)) {
         if (result is DownloadProgress) {
-          chunkEvents.add(ImageChunkEvent(
-            cumulativeBytesLoaded: result.downloaded,
-            expectedTotalBytes: result.totalSize,
-          ));
+          chunkEvents.add(
+            ImageChunkEvent(
+              cumulativeBytesLoaded: result.downloaded,
+              expectedTotalBytes: result.totalSize,
+            ),
+          );
         }
         if (result is FileInfo) {
-          var file = result.file;
-          var bytes = await file.readAsBytes();
-          var decoded = await decode(bytes);
+          final file = result.file;
+          final bytes = await file.readAsBytes();
+          final decoded = await decode(bytes);
           yield decoded;
         }
       }
-    } catch (e) {
+    } on Object catch (_) {
       // Depending on where the exception was thrown, the image cache may not
       // have had a chance to track the key in the cache at all.
       // Schedule a microtask to give the cache a chance to add the key.
       scheduleMicrotask(() {
         evictImage();
       });
-
       errorListener?.call();
       rethrow;
     } finally {
@@ -158,7 +160,6 @@ class ImageLoader implements platform.ImageLoader {
     StreamController<ImageChunkEvent> chunkEvents,
   ) {
     final resolved = Uri.base.resolve(url);
-
     // ignore: undefined_function
     return ui.webOnlyInstantiateImageCodecFromUrl(
       resolved,

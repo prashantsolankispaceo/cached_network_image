@@ -33,7 +33,7 @@ typedef ProgressIndicatorBuilder = Widget Function(
 typedef LoadingErrorWidgetBuilder = Widget Function(
   BuildContext context,
   String url,
-  dynamic error,
+  Object error,
 );
 
 /// Image widget to show NetworkImage with caching functionality.
@@ -49,20 +49,20 @@ class CachedNetworkImage extends StatelessWidget {
   /// [BaseCacheManager] as the in memory [ImageCache] of the [ImageProvider].
   /// [url] is used by both the disk and memory cache. The scale is only used
   /// to clear the image from the [ImageCache].
-  static Future evictFromCache(
+  static Future<bool> evictFromCache(
     String url, {
     String? cacheKey,
-    BaseCacheManager? cacheManager,
+    BaseCacheManager? baseCacheManager,
     double scale = 1.0,
   }) async {
-    cacheManager = cacheManager ?? DefaultCacheManager();
+    final cacheManager = baseCacheManager ?? DefaultCacheManager();
     await cacheManager.removeFile(cacheKey ?? url);
     return CachedNetworkImageProvider(url, scale: scale).evict();
   }
 
   final CachedNetworkImageProvider _image;
 
-  /// Option to use cachemanager with other settings
+  /// Option to use cacheManager with other settings
   final BaseCacheManager? cacheManager;
 
   /// The target image that is displayed.
@@ -206,7 +206,7 @@ class CachedNetworkImage extends StatelessWidget {
   /// loaded image. Next to that it supports most features of a default Image
   /// widget.
   CachedNetworkImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.httpHeaders,
     this.imageBuilder,
@@ -236,7 +236,7 @@ class CachedNetworkImage extends StatelessWidget {
     this.maxHeightDiskCache,
     ImageRenderMethodForWeb imageRenderMethodForWeb =
         ImageRenderMethodForWeb.HtmlImage,
-  })  : _image = CachedNetworkImageProvider(
+  }) : _image = CachedNetworkImageProvider(
           imageUrl,
           headers: httpHeaders,
           cacheManager: cacheManager,
@@ -244,17 +244,16 @@ class CachedNetworkImage extends StatelessWidget {
           imageRenderMethodForWeb: imageRenderMethodForWeb,
           maxWidth: maxWidthDiskCache,
           maxHeight: maxHeightDiskCache,
-        ),
-        super(key: key);
+        );
 
   @override
   Widget build(BuildContext context) {
     var octoPlaceholderBuilder =
         placeholder != null ? _octoPlaceholderBuilder : null;
-    var octoProgressIndicatorBuilder =
+    final octoProgressIndicatorBuilder =
         progressIndicatorBuilder != null ? _octoProgressIndicatorBuilder : null;
 
-    ///If there is no placeholer OctoImage does not fade, so always set an
+    ///If there is no placeholder OctoImage does not fade, so always set an
     ///(empty) placeholder as this always used to be the behaviour of
     ///CachedNetworkImage.
     if (octoPlaceholderBuilder == null &&
@@ -307,7 +306,10 @@ class CachedNetworkImage extends StatelessWidget {
       downloaded = progress.cumulativeBytesLoaded;
     }
     return progressIndicatorBuilder!(
-        context, imageUrl, DownloadProgress(imageUrl, totalSize, downloaded));
+      context,
+      imageUrl,
+      DownloadProgress(imageUrl, totalSize, downloaded),
+    );
   }
 
   Widget _octoErrorBuilder(
