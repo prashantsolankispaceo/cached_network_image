@@ -11,7 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_cache_manager:
-    path: ../flutter_cache_manager-master/flutter_cache_manager
+    git:
+      url: https://github.com/prashantsolankispaceo/flutter_cache_manager.git
+      path: flutter_cache_manager
 
 dev_dependencies:
   flutter_test:

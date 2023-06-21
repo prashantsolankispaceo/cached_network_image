@@ -81,9 +81,11 @@ packages:
   flutter_cache_manager:
     dependency: "direct main"
     description:
-      path: "../flutter_cache_manager-master/flutter_cache_manager"
-      relative: true
-    source: path
+      path: flutter_cache_manager
+      ref: HEAD
+      resolved-ref: cf8cd61a20d2a788b1f2da34d042f8c871cc00a7
+      url: "https://github.com/prashantsolankispaceo/flutter_cache_manager.git"
+    source: git
     version: "3.3.0"
   flutter_lints:
     dependency: "direct dev"

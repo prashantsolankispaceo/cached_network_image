@@ -11,9 +11,13 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_cache_manager:
-    path: ../flutter_cache_manager-master/flutter_cache_manager
+    git:
+      url: https://github.com/prashantsolankispaceo/flutter_cache_manager.git
+      path: flutter_cache_manager
   cached_network_image_platform_interface:
-    path: ../cached_network_image_platform_interface
+    git:
+      url: https://github.com/prashantsolankispaceo/cached_network_image.git
+      path: cached_network_image_platform_interface
 
 dev_dependencies:
   flutter_test:
