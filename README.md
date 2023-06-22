@@ -23,10 +23,9 @@ errorWidget: (context, url, error) => Icon(Icons.error),
 Or with a progress indicator:
  ```dart
 CachedNetworkImage(
-imageUrl: "http://via.placeholder.com/350x150",
-progressIndicatorBuilder: (context, url, downloadProgress) =>
-CircularProgressIndicator(value: downloadProgress.progress),
-errorWidget: (context, url, error) => Icon(Icons.error),
+  imageUrl: "http://via.placeholder.com/350x150",
+  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+  errorWidget: (context, url, error) => Icon(Icons.error),
 ),
  ```
 
@@ -44,8 +43,8 @@ decoration: BoxDecoration(
 image: DecorationImage(
 image: imageProvider,
 fit: BoxFit.cover,
-colorFilter:
-ColorFilter.mode(Colors.red, BlendMode.colorBurn)),
+colorFilter: ColorFilter.mode(Colors.red, BlendMode.colorBurn),
+),
 ),
 ),
 placeholder: (context, url) => CircularProgressIndicator(),
